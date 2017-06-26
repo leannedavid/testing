@@ -59,7 +59,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
     //Returns the size of arrayList holding all our articles
     @Override
     public int getItemCount(){
-        return articlesList.size();
+        return articlesList == null ? 0 : articlesList.size();
     }
 
 
@@ -74,8 +74,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
 
             //Getting references of the id's from the news_article.xml file
             mTitleText = (TextView) view.findViewById(R.id.news_title);
-            mDescriptionText = (TextView) view.findViewById(R.id.news_description);
             mTimeText = (TextView) view.findViewById(R.id.news_time);
+            mDescriptionText = (TextView) view.findViewById(R.id.news_description);
 
             view.setOnClickListener(this);
         }
