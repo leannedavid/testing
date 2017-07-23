@@ -23,7 +23,7 @@ public final class NetworkUtils {
     private final static String SORT_BY = "latest";
     /* The (unique) API key used in the URL */
     //TODO: Insert your own API KEY HERE
-    private final static String API_KEY = "";
+    private final static String API_KEY = "5aab5f02d5da47078b6e1a613ddecde9";
 
 
     final static String SOURCE_PARAM = "source";
