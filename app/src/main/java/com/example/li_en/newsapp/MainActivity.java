@@ -1,8 +1,12 @@
 package com.example.li_en.newsapp;
 
+
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,25 +18,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import com.example.li_en.newsapp.model.NewsItem;
-import com.example.li_en.newsapp.utilities.NetworkUtils;
-import com.example.li_en.newsapp.utilities.NewsJsonUtils;
+import com.example.li_en.newsapp.database.DBHelper;
+import com.example.li_en.newsapp.database.DatabaseUtils;
+import com.example.li_en.newsapp.tasks.FetchNews;
 
-import org.json.JSONException;
-import org.w3c.dom.Text;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Void>, NewsAdapter.NewsClickListener{
     static final String TAG = "mainactivity";
 
     //private TextView mUrlDisplayTextView;
     private RecyclerView recyclerView;
     private ProgressBar bar;
+    private Cursor cursor;
+    private SQLiteDatabase db;
+    private NewsAdapter adapter;
+
+    private static final int NEWS_LOADER = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,16 +50,64 @@ public class MainActivity extends AppCompatActivity {
         //mUrlDisplayTextView = (TextView) findViewById(R.id.url_display);
     }
 
+    @Override
+    protected void onStart(){
+        super.onStart();
+        db = new DBHelper(MainActivity.this).getReadableDatabase();
+        cursor = DatabaseUtils.getAll(db);
+        //adapter = new NewsAdapter(cursor, this);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        db.close();
+        cursor.close();
+    }
+
+
+
     private void loadNewsData(){
         /* Was used to test if the URL was built correctly */
         //URL testNews = NetworkUtils.buildUrl(NetworkUtils.get_API_Key());
         //mUrlDisplayTextView.setText(testNews.toString());
 
-        new FetchNewsTask().execute(NetworkUtils.get_API_Key());
+       // new FetchNewsTask().execute();
+    }
+
+
+    public Loader<Void> onCreateLoader(int id, final Bundle args){
+        return new AsyncTaskLoader<Void>(this) {
+
+            //Equivalent to AsyncTask's onPreExecute method
+            @Override
+            public void onStartLoading(){
+                super.onStartLoading();
+                bar.setVisibility(View.VISIBLE);
+            }
+
+            //Equivalent to AsyncTask's doInBackGround method
+            @Override
+            public Void loadInBackground() {
+                FetchNews.fetchArticles(MainActivity.this);
+                return null;
+            }
+        };
+    }
+
+    //Equivalent to AsyncTask's onPostExecute method
+    @Override
+    public void onLoadFinished(Loader<Void> loader, Void data){
+        bar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Void> data){
     }
 
 
 
+/*
     public class FetchNewsTask extends AsyncTask<String, Void, ArrayList<NewsItem>>{
         @Override
         protected void onPreExecute(){
@@ -109,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
+*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -122,10 +173,23 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if(id == R.id.action_search){
-            loadNewsData();
+            load();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    @Override
+    public void onNewsClick(int clickedItem){
+        //ahhhh Cursor
+    }
+
+    public void load(){
+        LoaderManager loaderManager = getSupportLoaderManager();
+        loaderManager.restartLoader(NEWS_LOADER, null, this).forceLoad();
+    }
+
 }
+

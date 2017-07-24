@@ -33,11 +33,11 @@ public final class NetworkUtils {
     //pass as a parameter if needed to
     public static String get_API_Key(){ return API_KEY; }
 
-    public static URL buildUrl(String apiKey) {
+    public static URL buildUrl() {
         Uri builtUri = Uri.parse(NEWS_BASE_URL).buildUpon()
                 .appendQueryParameter(SOURCE_PARAM, SOURCE)
                 .appendQueryParameter(SORT_PARAM, SORT_BY)
-                .appendQueryParameter(API_KEY_PARAM, apiKey)
+                .appendQueryParameter(API_KEY_PARAM, API_KEY)
                 .build();
 
         URL url = null;
