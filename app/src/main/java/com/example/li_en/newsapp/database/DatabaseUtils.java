@@ -3,20 +3,12 @@ package com.example.li_en.newsapp.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 import com.example.li_en.newsapp.model.NewsItem;
-
 import java.util.ArrayList;
-
 import static com.example.li_en.newsapp.database.Contract.TABLE_ARTICLES.*;
 
-/**
- * Created by li-en on 7/22/17.
- */
-
 public class DatabaseUtils {
-    //Query that gets all the items in the table and sort them by the most
-    //recent updates
+    //Query that gets all the items in the table and sort them by the most recent updates
     public static Cursor getAll(SQLiteDatabase db) {
         Cursor cursor = db.query(
                 TABLE_NAME,
@@ -30,7 +22,7 @@ public class DatabaseUtils {
         return cursor;
     }
 
-
+    //easier way to insert multiple articles into the db
     public static void bulkInsert(SQLiteDatabase db, ArrayList<NewsItem> articles){
         db.beginTransaction();
         try{
@@ -51,7 +43,8 @@ public class DatabaseUtils {
         }
     }
 
+    //completely deletes the table and all of its values
     public static void deleteAll(SQLiteDatabase db){
-       // db.delete(TABLE_NAME, null, null);
+        db.delete(TABLE_NAME, null, null);
     }
 }

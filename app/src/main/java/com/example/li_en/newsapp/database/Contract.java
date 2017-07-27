@@ -2,10 +2,6 @@ package com.example.li_en.newsapp.database;
 
 import android.provider.BaseColumns;
 
-/**
- * Created by li-en on 7/22/17.
- */
-
 public class Contract {
     public static class TABLE_ARTICLES implements BaseColumns{
         //name of the table to be used
